@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+         http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!--
+        The Maven model version.
+        Almost all modern Maven projects use 4.0.0.
+    -->
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <!--
+        Spring Boot parent.
+
+        This gives us sensible default versions for:
+        - Spring Framework
+        - Spring Data JPA
+        - Spring Web
+        - H2
+        - Hibernate
+        - Validation
+        - Tomcat
+        - and other dependencies
+
+        Because Spring Boot manages these versions,
+        we usually do not manually specify versions
+        for each Spring dependency.
+    -->
+    <parent>
+
+        <groupId>org.springframework.boot</groupId>
+
+        <artifactId>spring-boot-starter-parent</artifactId>
+
+        <version>4.0.1</version>
+
+        <relativePath/>
+
+    </parent>
+
+
+    <!--
+        Information identifying your Maven project.
+    -->
+    <groupId>com.chidi</groupId>
+
+    <artifactId>security</artifactId>
+
+    <version>0.0.1-SNAPSHOT</version>
+
+    <name>security</name>
+
+    <description>
+        Simple Spring Boot user account and OTP authentication learning project
+    </description>
+
+
+    <!--
+        Project-wide properties.
+    -->
+    <properties>
+
+        <!--
+            Your project is running on Java 21.
+        -->
+        <java.version>21</java.version>
+
+    </properties>
+
+
+    <dependencies>
+
+
+        <!-- ===================================================== -->
+        <!-- SPRING WEB                                             -->
+        <!-- ===================================================== -->
+
+        <!--
+            Gives us:
+
+            @Controller
+            @RestController
+            @RequestMapping
+            @GetMapping
+            @PostMapping
+            @PutMapping
+            @PatchMapping
+
+            It also includes embedded Tomcat.
+
+            Your static HTML files inside:
+
+            src/main/resources/static
+
+            are also served by Spring Boot.
+        -->
+        <dependency>
+
+            <groupId>org.springframework.boot</groupId>
+
+            <artifactId>spring-boot-starter-web</artifactId>
+
+        </dependency>
+
+
+
+        <!-- ===================================================== -->
+        <!-- SPRING DATA JPA                                       -->
+        <!-- ===================================================== -->
+
+        <!--
+            Gives us:
+
+            @Entity
+            @Table
+            @Id
+            @GeneratedValue
+            @Column
+            @ManyToOne
+            @JoinColumn
+
+            and:
+
+            JpaRepository
+
+            This is what allows UserAccountRepository
+            and OTPRepository to communicate with H2.
+        -->
+        <dependency>
+
+            <groupId>org.springframework.boot</groupId>
+
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+
+        </dependency>
+
+
+
+        <!-- ===================================================== -->
+        <!-- H2 DATABASE                                           -->
+        <!-- ===================================================== -->
+
+        <!--
+            H2 is the database we are using for this project.
+
+            scope=runtime means:
+            Java code does not need to directly compile against
+            H2 classes, but H2 must be available when the
+            application runs.
+        -->
+        <dependency>
+
+            <groupId>com.h2database</groupId>
+
+            <artifactId>h2</artifactId>
+
+            <scope>runtime</scope>
+
+        </dependency>
+
+
+
+        <!-- ===================================================== -->
+        <!-- VALIDATION                                            -->
+        <!-- ===================================================== -->
+
+        <!--
+            Gives us validation annotations such as:
+
+            @NotBlank
+            @NotNull
+            @Size
+            @Pattern
+
+            These are used heavily inside your request DTOs.
+        -->
+        <dependency>
+
+            <groupId>org.springframework.boot</groupId>
+
+            <artifactId>spring-boot-starter-validation</artifactId>
+
+        </dependency>
+
+
+
+        <!-- ===================================================== -->
+        <!-- SPRING SECURITY CRYPTO                                -->
+        <!-- ===================================================== -->
+
+        <!--
+            IMPORTANT:
+
+            We are NOT using Spring Security to control login
+            and authorization in this version of the project.
+
+            We are only borrowing its secure password utilities:
+
+            PasswordEncoder
+            BCryptPasswordEncoder
+
+            This allows us to safely hash passwords rather than
+            storing plain-text passwords in H2.
+        -->
+        <dependency>
+
+            <groupId>org.springframework.security</groupId>
+
+            <artifactId>spring-security-crypto</artifactId>
+
+        </dependency>
+
+
+
+        <!-- ===================================================== -->
+        <!-- LOMBOK                                                -->
+        <!-- ===================================================== -->
+
+        <!--
+            Lombok generates common Java boilerplate for us.
+
+            Your project currently uses annotations such as:
+
+            @Getter
+            @Setter
+            @NoArgsConstructor
+            @AllArgsConstructor
+
+            Without this dependency those annotations will not work.
+        -->
+        <dependency>
+
+            <groupId>org.projectlombok</groupId>
+
+            <artifactId>lombok</artifactId>
+
+            <optional>true</optional>
+
+        </dependency>
+
+
+
+        <!-- ===================================================== -->
+        <!-- TESTING                                               -->
+        <!-- ===================================================== -->
+
+        <!--
+            Provides Spring Boot testing support.
+
+            You do not need to focus on automated tests yet,
+            but keeping this dependency is standard and useful
+            for later.
+        -->
+        <dependency>
+
+            <groupId>org.springframework.boot</groupId>
+
+            <artifactId>spring-boot-starter-test</artifactId>
+
+            <scope>test</scope>
+
+        </dependency>
+
+
+    </dependencies>
+
+
+    <!-- ========================================================= -->
+    <!-- BUILD                                                     -->
+    <!-- ========================================================= -->
+
+    <build>
+
+        <plugins>
+
+            <!--
+                Allows Maven to build and run the application
+                as a Spring Boot application.
+
+                For example:
+
+                mvn spring-boot:run
+            -->
+            <plugin>
+
+                <groupId>org.springframework.boot</groupId>
+
+                <artifactId>spring-boot-maven-plugin</artifactId>
+
+
+                <!--
+                    Lombok is only needed during compilation.
+
+                    We do not need Lombok itself packaged
+                    inside the final executable application.
+                -->
+                <configuration>
+
+                    <excludes>
+
+                        <exclude>
+
+                            <groupId>org.projectlombok</groupId>
+
+                            <artifactId>lombok</artifactId>
+
+                        </exclude>
+
+                    </excludes>
+
+                </configuration>
+
+            </plugin>
+
+        </plugins>
+
+    </build>
+
+
+</project>
